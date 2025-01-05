@@ -1,0 +1,185 @@
+<%- include('layout/header') %>
+
+  <!-- Right: Login Form -->
+  <div class="bg-gray-200 lg:p-36 md:p-52 sm:20 p-8 w-full lg:w-1/2 lg:h-full rounded-lg -ml-10">
+    <h2 class="text-3xl font-bold text-center mb-8">Login</h2>
+
+    <!-- Username Field -->
+    <form id="form">
+      <div class="mb-4 justify-CE relative mt-8">
+        <label for="username"
+          class="block absolute -top-2.5 left-4 bg-gray-200 text-gray-700 text-sm res-text-xs">Username</label>
+        <input type="text" id="username" name="username"
+          class="w-full px-4 py-2 border rounded-lg border-gray-700 bg-gray-200 focus:outline-none focus:border-orange-500 res-text-xs"
+          placeholder="Username" />
+        <div><span class="text-sm res-text-xs" id="usernameError"></span></div>
+ 
+      </div>
+
+      <!-- Password Field -->
+      <div class="mb-6">
+        <div class="mb-0 relative mt-6">
+          <label for="password"
+            class="absolute -top-2.5 left-4 bg-gray-200 text-gray-700 mb-2 text-sm res-text-xs">Password</label>
+            <input type="password" id="password" name="password"
+            class="w-full font-sans px-4 py-2 border rounded-lg bg-gray-200 border-gray-700 focus:outline-none focus:border-orange-500 res-text-xs"
+            placeholder="Enter your password" />
+   
+     <!-- Toggle Button -->
+     <button type="button" id="togglePassword"
+             class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+       Show
+     </button>
+          <div><span class="text-sm res-text-xs" id="passwordError"></span></div>
+
+        </div>
+      </div>
+
+      <!-- Sign-in / Forgot Password -->
+      <div class="flex justify-between text-sm text-gray-600 mb-10 mt-0">
+        <a href="/signup" class="hover:text-orange-500 font-bold res-text-xs">Sign in now</a>
+        <a href="/forgotPassword" class="hover:text-orange-500 font-bold res-text-xs">Forgot password</a>
+      </div>
+
+      <!-- Login Button -->
+      <button
+        class="w-full mb-10 bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600 res-text-xs">
+        Login
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="flex items-center justify-center my-4 mt-0">
+      <span class="w-full border-t border-gray-300"></span>
+      <span class="px-4 text-gray-400">or</span>
+      <span class="w-full border-t border-gray-300"></span>
+    </div>
+    <% if (typeof msg !=='undefined' ) { %>
+      <div class="alert alert-danger text-red-500">
+        <%= msg %>
+      </div>
+      <% } %>
+
+        <!-- Google Signup Button -->
+        <a href="/auth/google">
+          <button id="googleSignInButton"
+            class="bg-white border border-gray-300 text-gray-700 flex items-center justify-center py-2 w-full rounded-md hover:bg-gray-100">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+              class="h-6 w-6 mr-2" />
+            Signup with Google
+          </button>
+        </a>
+  </div>
+  </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+<script>
+  document.getElementById('form').addEventListener('submit',(event)=>{
+    event.preventDefault()
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const credential = {
+    'username': username, 
+    'password': password,
+  };
+  // post  the credential
+  fetch('/login', { 
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', // Specify JSON data
+    },
+    body: JSON.stringify(credential), // Convert object to JSON
+  }).then((response)=>{
+    if(response.status==200){
+      Swal.fire({
+        title: 'Login Success',
+        text: 'You have been logged in',
+        icon: 'success',
+        }).then(()=>{
+          window.location.href = '/';
+        })
+      }else if(response.status==401){
+        Swal.fire({
+          title: 'Invalid Credentials',
+          text: 'Please check your username and password',
+          icon: 'error',
+          })
+      }else if(response.status==402){
+        Swal.fire({
+          title: 'Account Not Found',
+          text: 'Please check your username and password',
+          icon: 'error',
+          })
+      }else if(response.status==403){
+        Swal.fire({
+          title: 'Forbidden',
+          text: 'You do not have permission to access',
+          icon: 'error',
+          })
+      }else if(response.status==404){
+        Swal.fire({
+          title: 'Page Not Found',
+          text: 'The page you are looking for does not exist',
+          icon: 'error',
+        })
+      }
+  }).catch((error)=>{
+    console.log(error);
+  })
+  })
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const username = document.getElementById("username");
+      const password = document.getElementById("password");
+      const passwordError = document.getElementById("passwordError")
+      const usernameError = document.getElementById("usernameError")
+      function showMessage(element, message, isValid) {
+        element.textContent = message;
+        element.style.color = isValid ? 'green' : 'red';
+      }
+
+
+      function validateusername() {
+        const usernameData = username.value.trim();
+        const nameRegex = /^[A-Za-z ]+$/;
+        if (nameRegex.test(usernameData)) {
+          showMessage(usernameError, "Valid", true);
+        } else {
+          showMessage(usernameError, "UserName must be a text", false);
+        }
+      }
+
+      function validatePassword() {
+        const passwordData = password.value.trim();
+        if (passwordData.length >= 6) {
+          showMessage(passwordError, 'Valid password', true);
+        } else {
+          showMessage(passwordError, 'Password must be at least 6 characters', false);
+        }
+      }
+
+      username.addEventListener("keyup", validateusername);
+      password.addEventListener("keyup", validatePassword);
+
+
+    })
+
+
+
+    const passwordInput = document.getElementById('password');
+  const togglePasswordButton = document.getElementById('togglePassword');
+
+  togglePasswordButton.addEventListener('click', () => {
+    // Toggle password visibility
+    const isPasswordVisible = passwordInput.type === 'text';
+    passwordInput.type = isPasswordVisible ? 'password' : 'text';
+
+    // Update button text
+    togglePasswordButton.textContent = isPasswordVisible ? 'Show' : 'Hide';
+  });
+
+</script>
+  </html>

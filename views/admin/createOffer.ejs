@@ -1,0 +1,511 @@
+<%- include('layout/adminpage_header') %>
+<div class="w-full m-4 bg-white rounded-md p-6">
+  <div class="flex justify-between">
+    <!--  -->
+  <button id="createBtn" class=" p-1 rounded-lg" onclick="window.location.reload()">
+    <h1 id="listText" class="font-bold  ">OFFER LIST</h1>
+  </button>
+  <!--  -->
+    <button id="create" class="bg-orange-500 p-1 rounded-lg">
+      <h1 id="creatText" class="font-bold  text-white">+CREATE</h1>
+    </button>
+  </div>
+  <!-- list -->
+  <div id="orderList" class="w-full  rounded-md flex justify-center pt-6">
+    <table class="min-w-full bg-white border border-gray-200">
+      <thead>
+        <tr class="bg-orange-400 text-white text-sm uppercase text-center">
+          <th class="py-3 px-4">Offer Name</th>
+          <th class="py-3 px-4">Discount Value</th>
+          <th class="py-3 px-4">Maximum Discount</th>
+          <th class="py-3 px-4">Offer For</th>
+          <th class="py-3 px-4">Created At</th>
+          <th class="py-3 px-4">Number of Items</th> 
+          <th class="py-3 px-4">Action</th>
+
+        </tr>
+      </thead>
+      
+      <tbody>
+        <%offers.forEach((offer)=>{%>
+          <tr class="text-center">
+            <td class="py-3 px-4 text-black font-sans font-bold">
+              <%=offer.offerName%>
+            </td>
+            <div class="h-20 absolute bg-red-200">
+            </div>
+            <td class="py-3 px-4 text-black font-sans">
+              <%=offer.offerPercentage%>%
+            </td>
+            <td class="py-3 px-4 text-black font-sans">
+              <%=offer.offerPercentage%>%
+            </td>
+            <td class="py-3 px-4 text-black font-sans">
+              <%=offer.offerType%>
+            </td>
+            <td class="py-3 px-4 text-black font-sans">
+              <%=new Date(offer.createdAt.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString("en-GB")%>
+            </td>
+            <td class="py-3 px-4 text-black font-sans">
+              <%=offer.associatedData.length%>
+            </td>
+            <td class="py-3 px-4 font-bold text-green-500 hover:font-extrabold">
+              <div onclick="viewDetails('<%=offer._id%>')" class="flex justify-start align-middle">
+                <svg height="20px" width="20px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <circle fill="#1FCFC1" cx="256" cy="256" r="245.801" />
+                  <polygon fill="#F2F2F2" points="195.825,391.629 376.351,256 195.825,120.371" />
+                  <g fill="#4D4D4D">
+                    <path d="M256,512c-68.381,0-132.667-26.628-181.019-74.98C26.628,388.667,0,324.38,0,256S26.628,123.333,74.981,74.98C123.333,26.628,187.619,0,256,0s132.667,26.628,181.019,74.98C485.372,123.333,512,187.62,512,256s-26.628,132.667-74.981,181.02C388.667,485.372,324.381,512,256,512z M256,20.398C126.089,20.398,20.398,126.089,20.398,256S126.089,491.602,256,491.602S491.602,385.911,491.602,256S385.911,20.398,256,20.398z" />
+                    <path d="M195.824,401.828c-1.553,0-3.115-0.355-4.557-1.075c-3.458-1.727-5.641-5.26-5.641-9.124V120.371c0-3.864,2.185-7.397,5.641-9.124c3.458-1.726,7.593-1.351,10.685,0.97l180.526,135.629c2.564,1.927,4.073,4.948,4.073,8.154s-1.508,6.228-4.073,8.154L201.951,399.783C200.15,401.137,197.994,401.828,195.824,401.828z M206.024,140.791v230.418L359.371,256L206.024,140.791z" />
+                    <path d="M256,473.243c-5.632,0-10.199-4.566-10.199-10.199c0-5.633,4.567-10.199,10.199-10.199c52.815,0,102.404-20.633,139.633-58.1c3.973-3.996,10.429-4.015,14.425-0.045c3.995,3.971,4.016,10.428,0.046,14.424C369.016,450.471,314.287,473.243,256,473.243z" />
+                    <path d="M430.396,377.825c-1.886,0-3.793-0.522-5.498-1.617c-4.741-3.041-6.118-9.351-3.076-14.092c1.514-2.36,2.998-4.788,4.411-7.216c2.834-4.867,9.077-6.516,13.945-3.684c4.868,2.833,6.518,9.077,3.684,13.945c-1.56,2.681-3.201,5.363-4.873,7.97C437.043,376.168,433.754,377.825,430.396,377.825z" />
+                  </g>
+                </svg>
+              <a><h1 class="pl-2">View</h1></a>
+              
+              </div>
+              </td>
+
+
+          </tr>
+          <%})%>
+          
+
+      </tbody>
+    </table>
+  </div>
+  <%if(!offers.length){%>
+  <div class="flex w-full justify-center text-red-500 font-bold">
+    <button id="noOrder" class=" p-1 rounded-lg">
+      <h1 id="creatText" class="font-bold  text-red-500">NO OFFERS ADDED</h1>
+    </button>
+  </div>
+  <%}%>
+<!-- paggination -->
+<div id="paggination" class="flex justify-center mt-8">
+  <nav class="inline-flex space-x-2">
+    <% if (currentPage > 1) { %>
+      <!-- Previous Button -->
+      <a href="?page=<%= currentPage - 1 %>&limit=<%= limit %>" class="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg mr-2">Previous</a>
+      </a>
+    <% } %> 
+
+    <!-- Page Numbers -->
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a href="?page=<%= i %>&limit=<%= limit %>"
+        class="px-4 py-2 rounded <% if (i === currentPage) { %> bg-green-600 text-white <% } else { %> bg-gray-800 text-white hover:bg-gray-700 <% } %>">
+        <%= i %>
+      </a>
+    <% } %>
+    <% if (currentPage < totalPages) { %>
+      <!-- Next Button -->
+   <a href="?page=<%= currentPage + 1 %>&limit=<%= limit %>" class="bg-gray-300 text-gray-700 px-3 py-1 rounded-lg ml-2">Next</a>
+      </a>
+    <% } %>
+  </nav>
+</div>
+
+<!--product details------------------------------------------------------------------------------- -->
+<div id="viewDetail" class="w-full  rounded-md flex justify-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Offer Details</h1>
+      <div class="mb-4">
+        <label for="offerName" class="block text-sm font-medium text-gray-700">Offer Name</label>
+        <input type="text" readonly id="offerName" placeholder="Enter offer name" 
+               class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+
+
+
+      <div class="mb-4 hidden">
+        <label for="offerNameref" class="block text-sm font-medium text-gray-700">Offer Name</label>
+        <input type="text" readonly id="offerNameref" placeholder="Enter offer name" 
+               class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+
+
+      <div class="mb-4">
+        <label for="offerName" class="block text-sm font-medium text-gray-700">Offer Percentage</label>
+        <input type="number" readonly id="percentage" placeholder="Enter offer Percentage" 
+               class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      <div class="mb-4">
+        <label for="offerDescription" class="block text-sm font-medium text-gray-700">Offer Description</label>
+        <textarea id="offerDescription" readonly rows="4" placeholder="Enter offer description" 
+                  class="w-full  mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+      </div>
+      <div class="mb-4">
+        <div class="mt-2 space-y-2">
+          <h1>Associated</h1>
+        
+        </div>
+      </div> 
+      <button id="edit" onclick="edit()" class="bg-orange-500 p-1 rounded-lg">
+        <h1  class="font-bold  text-white">Edit</h1>
+      </button>
+      <button id="save" onclick="save()" class="bg-orange-500 p-1 rounded-lg hidden">
+        <h1  class="font-bold  text-white">Save</h1>
+      </button> 
+    </div>
+  </div>
+  <!-----------create--------------------------------------------------------------------- -->
+   
+   <div id="createDiv" class="w-full  rounded-md flex justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+          <h1 class="text-2xl font-bold text-gray-800 mb-6">Create Offer</h1>
+          <div class="mb-4">
+            <label for="offerName" class="block text-sm font-medium text-gray-700">Offer Name</label>
+            <input type="text" id="offerNameC" placeholder="Enter offer name" 
+                   class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div class="mb-4">
+            <label for="percentageC" class="block text-sm font-medium text-gray-700">Offer Percentage</label>
+            <input type="number" id="percentageC" placeholder="Enter offer Percentage" 
+                   class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div class="mb-4">
+            <label for="offerDescription" class="block text-sm font-medium text-gray-700">Offer Description</label>
+            <textarea id="offerDescriptionC" rows="4" placeholder="Enter offer description" 
+                      class="w-full mt-1 p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Offer Type</label>
+            <div class="mt-2 space-y-2">
+              <div>
+                <input type="radio" id="allProducts" name="offerType" value="all" checked 
+                       class="focus:ring-blue-500 text-blue-600 border-gray-300">
+                <label for="allProducts" class="text-gray-700">For All Products</label>
+              </div>
+              <div>
+                <input type="radio" id="specificCategory" name="offerType" value="category" 
+                       class="focus:ring-blue-500 text-blue-600 border-gray-300">
+                <label for="specificCategory" class="text-gray-700">For Specific Category</label>
+              </div>
+              <div>
+                <input type="radio" id="specificProduct" name="offerType" value="product" 
+                       class="focus:ring-blue-500 text-blue-600 border-gray-300">
+                <label for="specificProduct" class="text-gray-700">For Specific Product</label>
+              </div>
+            </div>
+          </div>
+            <div id="products" class="mb-4 hidden">
+            <label id="associatedLabel" class="block text-sm font-medium text-gray-700">
+              Select Products
+            </label>
+            <div class="mt-2 grid grid-cols-2 gap-4">
+              <% products.forEach((product) => { %>
+                <div class="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="product_<%= product.id %>"
+                    name="selectedProducts"
+                    value="<%= product.id %>"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label for="product_<%= product.id %>" class="ml-2 text-sm text-gray-700">
+                    <%= product.product_name %>
+                  </label>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+
+          <!-- associated catagories -->
+          <div id="catagories" class="mb-4 hidden">
+            <label id="associatedLabel" class="block text-sm font-medium text-gray-700">
+              Select Category
+            </label>
+            <div class="mt-2 grid grid-cols-2 gap-4">
+              <% Category.forEach((Cate) => { %>
+                <div class="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="product_<%= Cate.id %>"
+                    name="selectedProducts"
+                    value="<%= Cate.id %>"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label for="product_<%= Cate.id %>" class="ml-2 text-sm text-gray-700">
+                    <%= Cate.category_name %>
+                  </label>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+
+
+          
+    
+          <!-- Submit Button -->
+          <div class="flex justify-end">
+            <button type="submit" onclick="addOffer()"
+                    class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg">
+              Create Offer
+            </button>
+          </div>
+        </div>
+      </div>
+   </div>
+
+
+   <!-- detail -->
+    
+   
+</div>
+
+
+
+
+
+
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // JavaScript for dynamic form behavior
+    const offerTypeRadios = document.querySelectorAll('input[name="offerType"]');
+    const catagoriesDiv = document.getElementById('catagories');
+    const productsDiv = document.getElementById('products');
+    const associatedLabel = document.getElementById('associatedLabel');
+    const associatedSelect = document.getElementById('associatedSelect');
+    let selected='';
+    offerTypeRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        selected=radio.value;
+        if (radio.value === 'category') {
+            catagoriesDiv.classList.remove('hidden');
+            productsDiv.classList.add('hidden')
+          associatedLabel.textContent = 'Select Product';
+        } else if (radio.value === 'product') {
+          productsDiv.classList.remove('hidden');
+          catagoriesDiv.classList.add('hidden')
+          associatedLabel.textContent = 'Select Product';
+
+          
+          
+        } else {
+          productsDiv.classList.add('hidden');
+          catagoriesDiv.classList.add('hidden');
+        }
+      });
+    });
+
+
+    async function addOffer() {
+    try {
+        // Collecting form data
+        const offerName = document.getElementById('offerNameC').value.trim();
+        const offerDescription = document.getElementById('offerDescriptionC').value.trim();
+        const offerPercentage = document.getElementById('percentageC').value.trim();
+
+        let associatedData = [];
+        
+        // Determine the selected offer type
+        if (selected === "category") {
+          associatedData = Array.from(
+                document.querySelectorAll('#catagories input[type="checkbox"]:checked')
+            ).map(checkbox => checkbox.value);
+        } else if (selected === "product") {
+          associatedData = Array.from( 
+                document.querySelectorAll('#products input[type="checkbox"]:checked')
+            ).map(checkbox => checkbox.value);
+        }else if (selected === '') {
+          associatedData = Array.from(
+                document.querySelectorAll('#products input[type="checkbox"]:checked')
+            ).map(checkbox => checkbox.value);
+        }
+
+        // Construct the payload
+        const payload = {
+            offerName,
+            offerDescription,
+            offerPercentage,
+            offerType: selected,
+            associatedData,
+        };
+
+        // Sending data to the server
+        const response = await fetch('/admin/create-offer', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+        // Handling server response
+        if(response.status==201){
+          Swal.fire({
+            title: 'Offer Created',
+            text: 'Offer created successfully',
+            icon: 'success',
+          })
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000);
+        }else if(response.status==409){
+          Swal.fire({
+            title: 'Error',
+            text: 'Offer already exists',
+            icon: 'error',
+          })
+        }else{
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to create offer',
+            icon: 'error',
+          })
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while creating the offer.');
+    }
+}
+document.getElementById('percentage').addEventListener('input', function (event) {
+    const percentageField = event.target;
+    const value = parseInt(percentageField.value, 10);
+    // Validate that the input is a number and does not exceed 50
+    if (isNaN(value) || value < 0 || value > 50) {
+        percentageField.setCustomValidity('Please enter a valid number between 0 and 50.');
+        percentageField.classList.add('border-red-500');
+        percentageField.classList.remove('border-blue-500');
+    } else {
+        percentageField.setCustomValidity('');
+        percentageField.classList.remove('border-red-500');
+        percentageField.classList.add('border-blue-500');
+    }
+
+    // Display error message if needed
+    percentageField.reportValidity();
+});
+
+document.getElementById('create').addEventListener('click',(event)=>{
+  event.preventDefault();
+  document.getElementById('createDiv').classList.remove('hidden')
+  document.getElementById('orderList').classList.add('hidden')
+  document.getElementById('createBtn').classList.add('bg-orange-500')
+  document.getElementById('paggination').classList.add('hidden')
+  document.getElementById('listText').classList.add('text-white')
+  document.getElementById('create').classList.add('hidden')
+})
+// no order
+document.getElementById('noOrder').addEventListener('click',(event)=>{
+  event.preventDefault();
+  document.getElementById('createDiv').classList.remove('hidden')
+  document.getElementById('orderList').classList.add('hidden')
+  document.getElementById('createBtn').classList.add('bg-orange-500')
+  document.getElementById('paggination').classList.add('hidden')
+  document.getElementById('listText').classList.add('text-white')
+  document.getElementById('noOrder').classList.add('hidden')
+})
+
+
+function viewDetails(id) {
+  document.getElementById('viewDetail').classList.remove('hidden');
+  document.getElementById('orderList').classList.add('hidden');
+  document.getElementById('paggination').classList.add('hidden');
+  document.getElementById('create').classList.add('hidden')
+
+  fetch(`/admin/offersDetails/${id}`) 
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error fetching offer details: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById('offerName').value = data.name || 'N/A';
+      document.getElementById('percentage').value = data.percentage || 0;
+      document.getElementById('offerDescription').value = data.description || 'No description available';
+      const associatedDiv = document.querySelector('#viewDetail .space-y-2');
+      associatedDiv.innerHTML = '';
+      associatedDiv.classList.add('p-4', 'bg-white', 'shadow-xl', 'rounded-lg', 'border');
+      if (data.associated && data.associated.length > 0) {
+        data.associated.forEach(item => {
+          const itemName = document.createElement('p');
+          itemName.textContent = item.product_name;
+          associatedDiv.appendChild(itemName);
+          //image
+          const imageElement = document.createElement('img');
+          imageElement.src = item.product_image[0]; 
+          imageElement.alt = item.product_name; 
+          imageElement.classList.add('w-16', 'h-16', 'rounded-md');
+          associatedDiv.appendChild(imageElement);
+        });
+      } else {
+        associatedDiv.innerHTML = '<p>No associated items found.</p>';
+      }  
+   })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to fetch offer details. Please try again.');
+    });
+
+}
+
+function edit(){
+  const inputs = document.querySelectorAll('#viewDetail input, #viewDetail textarea');
+    
+    // Iterate through each element and remove the 'readonly' attribute
+    inputs.forEach(element => {
+      element.removeAttribute('readonly');
+    });
+ document.getElementById('edit').classList.add('hidden')
+ document.getElementById('save').classList.remove('hidden')
+
+}
+
+
+function save(){
+  try {
+  const offerId = document.getElementById('offerName').value; 
+  const offerName = document.getElementById('offerName').value;
+  const percentage = document.getElementById('percentage').value;
+  const offerDescription = document.getElementById('offerDescription').value;
+
+  const data = {
+    offerName: offerName,
+    percentage: percentage,
+    offerDescription: offerDescription,
+  };
+
+
+  
+  fetch(`/admin/editOffer`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+}).then((response)=>{
+  if(response.status==200){
+  Swal.fire({
+  icon: 'success',
+  title: 'Success',
+  text: 'Offer updated successfully',
+  confirmButtonText: 'OK'
+}).then(()=>{
+  window.location.reload()
+});
+  }else{
+    Swal.fire({
+        icon: 'warning',
+        title: 'Failed',
+        text: 'Failed to update offer',
+        confirmButtonText: 'OK'
+      });
+  }
+})
+
+} catch (error) {
+    
+  }
+}
+
+
+
+
+
+  </script>
+<%- include('layout/admin_footer') %>

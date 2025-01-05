@@ -1,0 +1,165 @@
+<script> 
+    function validateProductSlug() {
+        const productSlugInput = document.getElementById("product_slug");
+        const errorMessage = document.getElementById("error-message");
+
+        // Check if input contains only numbers
+        if (/^[a-zA-Z^\d]*$/.test(productSlugInput.value)) {
+            // Valid input: hide error message
+            errorMessage.classList.add("hidden");
+        } else {
+            // Invalid input: show error message and clear input
+            errorMessage.classList.remove("hidden");
+        }
+    }
+    function validateName() {
+        const nameInput = document.getElementById("product_name");
+        const errorName = document.getElementById("error-Name");
+        if (/^[a-zA-Z^\d ]*$/.test(nameInput.value)) {
+
+            document.getElementById("product_slug").value=(nameInput.value.split("")).map((a)=>(a==" ")?a='-':a).join("")
+            document.getElementById("brand").value=(nameInput.value.split(" ")[0])
+            // Valid input: hide error message
+            errorName.classList.add("hidden");
+        } else {
+            // Invalid input: show error message and clear input
+            errorName.classList.remove("hidden");
+        }
+    }
+    function validateSKU() {
+        const skuInput = document.getElementById("sku");
+        const errorSku = document.getElementById("error-sku");
+        const skuValue = parseInt(skuInput.value, 10);
+
+        // Check if input is a number and within the allowed range
+        if (/^\d*$/.test(skuInput.value) && skuValue <= 100) {
+            // Valid input: hide error message
+            errorSku.classList.add("hidden");
+        } else {
+            // Invalid input: show error message
+            errorSku.classList.remove("hidden");
+        }
+    }
+    function validateBrand() {
+        const brandInput = document.getElementById("brand");
+        const errorBrand = document.getElementById("error-brand");
+
+        // Check if input contains only alphabetic characters
+        if (/^[A-Za-z]*$/.test(brandInput.value)) {
+            // Valid input: hide error message
+            errorBrand.classList.add("hidden");
+        } else {
+            // Invalid input: show error message
+            errorBrand.classList.remove("hidden");
+        }
+    }
+    function validatePrice() {
+        const priceInput = document.getElementById("price");
+        const errorPrice = document.getElementById("error-price");
+
+        // Check if input contains only numeric characters
+        if (/^\d*$/.test(priceInput.value)) {
+            // Valid input: hide error message
+            errorPrice.classList.add("hidden");
+        } else {
+            // Invalid input: show error message
+            errorPrice.classList.remove("hidden");
+        }
+    }
+
+    function hsn_code(){
+        const HSN_Code = document.getElementById("HSN_Code");
+        const data = HSN_Code.value;
+        document.getElementById("gst").value=HSN_Code.value
+    }
+    
+
+
+    function isNumeric(value) {
+        return !isNaN(value) && value.trim() !== "";
+    }
+    function validateStockQuantity() {
+        const stockInput = document.getElementById("stock_quantity");
+        const errorStockQuantity = document.getElementById("error-stock-quantity");
+
+        // Ensure the input is a valid number between 1 and 100
+        const stockValue = stockInput.value;
+        if (stockValue >= 1 && stockValue <= 100) {
+            // Valid input: hide error message
+            errorStockQuantity.classList.add("hidden");
+        } else {
+            // Invalid input: show error message
+            errorStockQuantity.classList.remove("hidden");
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the current date
+        const currentDate = new Date();
+
+        // Calculate the date one year from now
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+
+        // Format the date to YYYY-MM-DD
+        const minDate = currentDate.toISOString().split('T')[0];
+
+        // Set the min attribute of the expiry input field
+        document.getElementById('expiry').setAttribute('min', minDate);
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the current date
+        const currentDate = new Date();
+
+        // Format the current date to YYYY-MM-DD
+        const maxDate = currentDate.toISOString().split('T')[0];
+
+        // Set the max attribute of the manufacturing input field
+        document.getElementById('mfg').setAttribute('max', maxDate);
+    });
+    // Fetch country data from the API
+    fetch('https://restcountries.com/v3.1/all')
+        .then(response => response.json())
+        .then(data => {
+            const countrySelect = document.querySelector('select[name="countryof_origin"]');
+
+            // Populate dropdown with countries
+            data.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.name.common;
+                option.textContent = country.name.common;
+
+                // Pre-select the current country if applicable
+                if (country.name.common === "<%= product.countryof_origin %>") {
+                    option.selected = true;
+                }
+
+                countrySelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching country data: ", error);
+        });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const eanDropdown = document.getElementById('ean-dropdown');
+
+        // Loop to create values from 6.0 to 8.3 in steps of 0.1
+        for (let value = 6.0; value <= 8.3; value += 0.1) {
+            const option = document.createElement('option');
+            option.value = value.toFixed(1); // Sets the value to 1 decimal place
+            option.textContent = value.toFixed(1); // Display the value in the dropdown
+            eanDropdown.appendChild(option);
+        }
+
+        // Set the current product's EAN as selected, if available
+        const currentEAN = "<%= product.ean %>"; // Replace with the dynamic EAN value from your server-side code
+        if (currentEAN) {
+            eanDropdown.value = currentEAN;
+        }
+    });
+
+
+   
+
+
+
+</script>
